@@ -18,15 +18,14 @@ app.get('/abracadabra/usuarios', (req, res) => {
     res.json(usuarios)
 });
 
-// app.get('/abracadabra/juego/:usuario', (req, res) => {
-//    const n = Math.floor(Math.random() * (4 - 1)) + 1;
-// const usuario = req.params.usuario;
-
-// usuario == n
-// ? res.redirect('./assets/img/conejito.jpg')
-// : res.redirect('./assets/img/voldemort.jpg');
-
-// });
+app.use('/abracadabra/juego/:usuarios', (req, res, next) => {
+    const ruta_usuario = req.params.usuarios;
+    if (usuarios.toLowerCase().includes(ruta_usuario.toLowerCase())) {
+        next()
+    } else {
+        res.sendFile(__dirname, + '/assets/img/who.jpeg')
+    }
+    });
 
 app.get('/abracadabra/conejo/:n', (req, res) => {
     const n = parseInt(req.params.n)
@@ -43,12 +42,13 @@ app.get('/abracadabra/conejo/:n', (req, res) => {
         res.sendFile(__dirname, + '/assets/img/voldemort.jpg')
     }
 });
+
 app.get('abracadabra/juego/:usuario', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
 //Ruta genérica
-// app.get("*", (req, res) => {
-//     res.send("<center><h1>Sorry, aquí no hay nada :/ </h1></center>");
-// });
+app.get("*", (req, res) => {
+    res.send("<center><h1>Sorry, aquí no hay nada :/ </h1></center>");
+});
 
 app.listen(port, () => console.log(`El servidor se ha levantado en el port http://localhost:${port}`));
