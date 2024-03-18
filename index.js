@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 3005;
 
 //Carpeta pública con middleware
 app.use(express.static('assets'));
@@ -14,41 +14,41 @@ app.get('/', (req, res) => {
     ("<center><h1>¡Bienvenido a la página incial!! </h1></center>")
 });
 
+//Ruta de la lista json de usuarios
 app.get('/abracadabra/usuarios', (req, res) => {
     res.json(usuarios)
 });
 
-app.use('/abracadabra/juego/:usuarios', (req, res, next) => {
-    const ruta_usuario = req.params.usuarios;
-    if (usuarios.toLowerCase().includes(ruta_usuario.toLowerCase())) {
-        next()
-    } else {
-        res.sendFile(__dirname, + '/assets/img/who.jpeg')
-    }
-    });
+//Middleware para validar que el usuario este en la lista json
+app.use('/abracadabra/juego/:usuario', (req, res, next) => {
+    const user = req.params.usuario 
+    const isUser = usuarios.map((u) => u.toLowerCase()).includes(user.toLowerCase()); 
 
+    isUser ? next() : res.sendFile(__dirname + "/assets/img/who.jpeg");         
+});
+
+//Ruta para devolver la imagen incognita
+app.get('/abracadabra/juego/:usuario', (req, res) => {
+    res.sendFile(__dirname + '/index.html')
+});
+
+//Ruta para ejecutar una respuesta aleatoria
 app.get('/abracadabra/conejo/:n', (req, res) => {
     const n = parseInt(req.params.n)
     
     const number = Math.floor(Math.random() * (5 - 1) + 1);
     
     if (n == number) {
-        console.log(n)
-        console.log(number)
         res.sendFile(__dirname + '/assets/img/conejito.jpg')
     } else {
-        console.log(n)
-        console.log(number)
-        res.sendFile(__dirname, + '/assets/img/voldemort.jpg')
+        res.sendFile(__dirname + '/assets/img/voldemort.jpg')
     }
 });
 
-app.get('abracadabra/juego/:usuario', (req, res) => {
-    res.sendFile(__dirname + '/index.html')
-})
 //Ruta genérica
-app.get("*", (req, res) => {
+app.get('*', (req, res) => {
     res.send("<center><h1>Sorry, aquí no hay nada :/ </h1></center>");
 });
 
+//Evento escuchador para levantar el servidor
 app.listen(port, () => console.log(`El servidor se ha levantado en el port http://localhost:${port}`));
